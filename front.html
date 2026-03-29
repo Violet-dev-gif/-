@@ -1,4 +1,5 @@
 //大创项目前端
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -10,316 +11,47 @@
     <!-- 优雅图标库 (Font Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(145deg, #f5f7fc 0%, #eef2f8 100%);
-            min-height: 100vh;
-            padding: 2rem 1.5rem;
-        }
-
-        /* 主容器 */
-        .app-container {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
-
-        /* 头部 */
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .header h1 {
-            font-size: 2.4rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #1a2a3f, #0f2b3d);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
-        }
-
-        .header p {
-            color: #4a627a;
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        .badge {
-            background: #e9edf2;
-            display: inline-block;
-            padding: 0.2rem 1rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            color: #2c4c6e;
-            margin-top: 0.8rem;
-        }
-
-        /* 双栏布局 (左: 输入区 / 右: 对话区) */
-        .dashboard {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.8rem;
-        }
-
-        .input-panel {
-            flex: 1.2;
-            min-width: 280px;
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(2px);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255,255,255,0.6);
-        }
-
-        .output-panel {
-            flex: 1;
-            min-width: 280px;
-            background: white;
-            border-radius: 2rem;
-            padding: 1.5rem;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #eef2f6;
-        }
-
-        /* 通用卡片模块 */
-        .module-card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 1.2rem;
-            margin-bottom: 1.8rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
-            border: 1px solid #eef2f8;
-            transition: all 0.2s;
-        }
-
-        .module-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #1e2f3f;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-left: 4px solid #3b82f6;
-            padding-left: 0.8rem;
-        }
-
-        .module-title i {
-            color: #3b82f6;
-            font-size: 1.2rem;
-        }
-
-        /* 图片上传区域 */
-        .upload-area {
-            border: 2px dashed #cbd5e1;
-            border-radius: 1.2rem;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #fafcff;
-        }
-        .upload-area:hover {
-            border-color: #3b82f6;
-            background: #f0f7ff;
-        }
-        .upload-area i {
-            font-size: 2rem;
-            color: #6c8db0;
-            margin-bottom: 0.4rem;
-        }
-        .image-preview {
-            margin-top: 0.8rem;
-            max-width: 100%;
-            border-radius: 1rem;
-            display: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .ocr-progress {
-            font-size: 0.75rem;
-            color: #3b82f6;
-            margin-top: 0.5rem;
-            font-weight: 500;
-        }
-
-        /* 语音按钮 */
-        .voice-btn {
-            background: linear-gradient(120deg, #1e293b, #0f172a);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.2rem;
-            border-radius: 3rem;
-            font-weight: 500;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
-        .voice-btn:hover {
-            background: linear-gradient(120deg, #0f172a, #020617);
-            transform: scale(0.98);
-        }
-        .voice-status {
-            font-size: 0.75rem;
-            color: #3b82f6;
-            margin-top: 0.4rem;
-            text-align: center;
-        }
-
-        /* 文本输入框 */
-        .text-input-area {
-            margin: 0.5rem 0 1rem;
-        }
-        .message-input {
-            width: 100%;
-            border: 1px solid #e2e8f0;
-            border-radius: 1.5rem;
-            padding: 1rem 1.2rem;
-            font-size: 0.95rem;
-            resize: vertical;
-            background: #ffffff;
-            transition: 0.2s;
-            font-family: inherit;
-        }
-        .message-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
-        }
-
-        .send-btn {
-            background: #3b82f6;
-            border: none;
-            color: white;
-            padding: 0.8rem 1rem;
-            border-radius: 2rem;
-            font-weight: 600;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 1rem;
-            margin-top: 0.6rem;
-        }
-        .send-btn:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-        }
-        .send-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* 结果展示区 */
-        .answer-box {
-            background: #f8fafc;
-            border-radius: 1.2rem;
-            padding: 1.2rem;
-            margin-top: 1rem;
-            flex-grow: 1;
-            overflow-y: auto;
-            min-height: 280px;
-            border: 1px solid #eef2f8;
-        }
-        .answer-header {
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-            color: #0f2b3d;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 0.5rem;
-        }
-        .answer-content {
-            white-space: pre-wrap;
-            line-height: 1.5;
-            color: #1e2a3a;
-            font-size: 0.95rem;
-        }
-        .loading-spinner {
-            display: inline-block;
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid #e2e8f0;
-            border-top-color: #3b82f6;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-        }
+        /* 样式部分完全不变，省略... 与用户提供的相同 */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; }
+        body { background: linear-gradient(145deg, #f5f7fc 0%, #eef2f8 100%); min-height: 100vh; padding: 2rem 1.5rem; }
+        .app-container { max-width: 1280px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 2.5rem; }
+        .header h1 { font-size: 2.4rem; font-weight: 700; background: linear-gradient(135deg, #1a2a3f, #0f2b3d); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.3px; }
+        .header p { color: #4a627a; margin-top: 0.5rem; font-weight: 500; }
+        .badge { background: #e9edf2; display: inline-block; padding: 0.2rem 1rem; border-radius: 40px; font-size: 0.8rem; color: #2c4c6e; margin-top: 0.8rem; }
+        .dashboard { display: flex; flex-wrap: wrap; gap: 1.8rem; }
+        .input-panel { flex: 1.2; min-width: 280px; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); border-radius: 2rem; padding: 1.5rem; box-shadow: 0 12px 28px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.6); }
+        .output-panel { flex: 1; min-width: 280px; background: white; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 12px 28px rgba(0,0,0,0.08); display: flex; flex-direction: column; border: 1px solid #eef2f6; }
+        .module-card { background: white; border-radius: 1.5rem; padding: 1.2rem; margin-bottom: 1.8rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03); border: 1px solid #eef2f8; transition: all 0.2s; }
+        .module-title { font-weight: 600; font-size: 1.1rem; color: #1e2f3f; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; border-left: 4px solid #3b82f6; padding-left: 0.8rem; }
+        .module-title i { color: #3b82f6; font-size: 1.2rem; }
+        .upload-area { border: 2px dashed #cbd5e1; border-radius: 1.2rem; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafcff; }
+        .upload-area:hover { border-color: #3b82f6; background: #f0f7ff; }
+        .upload-area i { font-size: 2rem; color: #6c8db0; margin-bottom: 0.4rem; }
+        .image-preview { margin-top: 0.8rem; max-width: 100%; border-radius: 1rem; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .ocr-progress { font-size: 0.75rem; color: #3b82f6; margin-top: 0.5rem; font-weight: 500; }
+        .voice-btn { background: linear-gradient(120deg, #1e293b, #0f172a); color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 3rem; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.6rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .voice-btn:hover { background: linear-gradient(120deg, #0f172a, #020617); transform: scale(0.98); }
+        .voice-status { font-size: 0.75rem; color: #3b82f6; margin-top: 0.4rem; text-align: center; }
+        .text-input-area { margin: 0.5rem 0 1rem; }
+        .message-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1rem 1.2rem; font-size: 0.95rem; resize: vertical; background: #ffffff; transition: 0.2s; font-family: inherit; }
+        .message-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        .send-btn { background: #3b82f6; border: none; color: white; padding: 0.8rem 1rem; border-radius: 2rem; font-weight: 600; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.6rem; cursor: pointer; transition: 0.2s; font-size: 1rem; margin-top: 0.6rem; }
+        .send-btn:hover { background: #2563eb; transform: translateY(-1px); }
+        .send-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+        .answer-box { background: #f8fafc; border-radius: 1.2rem; padding: 1.2rem; margin-top: 1rem; flex-grow: 1; overflow-y: auto; min-height: 280px; border: 1px solid #eef2f8; }
+        .answer-header { font-weight: 600; margin-bottom: 0.8rem; color: #0f2b3d; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; }
+        .answer-content { white-space: pre-wrap; line-height: 1.5; color: #1e2a3a; font-size: 0.95rem; }
+        .loading-spinner { display: inline-block; width: 1rem; height: 1rem; border: 2px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.6s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* API 配置区 */
-        .config-area {
-            margin-top: 1.5rem;
-            background: #f1f5f9;
-            border-radius: 1.2rem;
-            padding: 0.9rem;
-            font-size: 0.8rem;
-        }
-        .config-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        .config-field {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-        .config-field input {
-            flex: 1;
-            padding: 0.4rem 0.6rem;
-            border-radius: 1rem;
-            border: 1px solid #cbd5e1;
-            font-size: 0.75rem;
-            background: white;
-        }
-        .config-note {
-            font-size: 0.7rem;
-            color: #4b5563;
-            margin-top: 0.3rem;
-        }
-        button.small-btn {
-            background: #e2e8f0;
-            border: none;
-            padding: 0.3rem 0.8rem;
-            border-radius: 1rem;
-            font-size: 0.7rem;
-            cursor: pointer;
-        }
-
-        hr {
-            margin: 0.8rem 0;
-            border-color: #e2e8f0;
-        }
-
-        @media (max-width: 780px) {
-            body { padding: 1rem; }
-            .dashboard { flex-direction: column; }
-        }
+        .config-area { margin-top: 1.5rem; background: #f1f5f9; border-radius: 1.2rem; padding: 0.9rem; font-size: 0.8rem; }
+        .config-title { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+        .config-field { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
+        .config-field input { flex: 1; padding: 0.4rem 0.6rem; border-radius: 1rem; border: 1px solid #cbd5e1; font-size: 0.75rem; background: white; }
+        .config-note { font-size: 0.7rem; color: #4b5563; margin-top: 0.3rem; }
+        button.small-btn { background: #e2e8f0; border: none; padding: 0.3rem 0.8rem; border-radius: 1rem; font-size: 0.7rem; cursor: pointer; }
+        hr { margin: 0.8rem 0; border-color: #e2e8f0; }
+        @media (max-width: 780px) { body { padding: 1rem; } .dashboard { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -367,19 +99,19 @@
                 <div class="config-title"><i class="fas fa-plug"></i> OpenClaw API 配置</div>
                 <div class="config-field">
                     <span style="white-space: nowrap;">端点 URL:</span>
-                    <input type="text" id="openclawUrl" placeholder="https://your-openclaw-api.com/chat" value="https://mock-openclaw.demo/api/chat">
+                    <input type="text" id="openclawUrl" placeholder="https://your-openclaw-api.com/chat" value="">
                 </div>
                 <div class="config-field">
                     <span>API Key (选填):</span>
                     <input type="text" id="openclawApiKey" placeholder="Bearer token 或 key">
                 </div>
                 <div class="config-note">
-                    <i class="fas fa-info-circle"></i> 默认使用模拟演示端点 (展示调用流程)。<br>
-                    请替换为真实 OpenClaw 地址，支持 JSON: { "text": "内容" } → 期望返回 { "response": "答案" }。<br>
-                    可修改下方「请求/响应适配」模式 (默认适配多数场景)。
+                    <i class="fas fa-info-circle"></i> 请填写真实的 OpenClaw API 地址和密钥。<br>
+                    默认请求格式：{ "text": "用户输入" }，响应会智能提取 response/reply/answer/content/text/message 字段。<br>
+                    如果你的 API 使用不同字段，请在下方代码中修改 callOpenClawApi 函数。
                 </div>
                 <div style="margin-top: 8px; display: flex; gap: 6px; justify-content: flex-end;">
-                    <button id="resetMockBtn" class="small-btn"><i class="fas fa-flask"></i> 重置演示Mock</button>
+                    <button id="resetMockBtn" class="small-btn"><i class="fas fa-undo-alt"></i> 清空配置</button>
                 </div>
             </div>
         </div>
@@ -404,9 +136,9 @@
 
 <script>
     // ---------- 全局变量 ----------
-    let tesseractWorker = null;          // Tesseract worker 复用
-    let isRecognizing = false;           // 语音状态
-    let recognition = null;              // Web Speech API 实例
+    let tesseractWorker = null;
+    let isRecognizing = false;
+    let recognition = null;
 
     // DOM 元素
     const imageInput = document.getElementById('imageInput');
@@ -453,27 +185,23 @@
         });
     }
 
-    // 更新文本域 (OCR / 语音结果填入)
     function setMessageText(text) {
         if (text && text.trim()) {
             userTextInput.value = text.trim();
-            // 自动调整高度简单处理
             userTextInput.style.height = 'auto';
             userTextInput.style.height = Math.min(120, userTextInput.scrollHeight) + 'px';
         }
     }
 
-    // 获取当前消息内容
     function getCurrentMessage() {
         return userTextInput.value.trim();
     }
 
-    // ---------- OCR 模块 (Tesseract.js 本地) ----------
+    // ---------- OCR 模块 ----------
     async function initTesseract() {
         if (!tesseractWorker) {
             ocrProgressDiv.innerText = '⚙️ 初始化OCR引擎中...';
             try {
-                // 创建 worker，使用英文（轻量）可支持中英混合可增加 chi_sim 但体积大，采用eng满足演示，需要中文可自行开启
                 tesseractWorker = await Tesseract.createWorker('eng', 1, {
                     logger: m => {
                         if (m.status === 'recognizing text') {
@@ -493,7 +221,6 @@
 
     async function performOCR(file) {
         if (!file) return;
-        // 预览图片
         const reader = new FileReader();
         reader.onload = (e) => {
             imagePreview.src = e.target.result;
@@ -524,14 +251,12 @@
         }
     }
 
-    // 监听图片上传
     uploadArea.addEventListener('click', () => imageInput.click());
     imageInput.addEventListener('change', (e) => {
         if (e.target.files && e.target.files[0]) {
             performOCR(e.target.files[0]);
         }
     });
-    // 拖拽上传增强
     uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#3b82f6'; });
     uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#cbd5e1'; });
     uploadArea.addEventListener('drop', (e) => {
@@ -545,7 +270,7 @@
         }
     });
 
-    // ---------- 语音识别 STT (Web Speech API) ----------
+    // ---------- 语音识别 STT ----------
     function initSpeechRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
             voiceStatus.innerText = '❌ 当前浏览器不支持语音识别，请使用 Chrome/Edge/Safari';
@@ -554,8 +279,8 @@
         }
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recog = new SpeechRecognition();
-        recog.lang = 'zh-CN';        // 支持中文普通话，也可以识别部分英文
-        recog.interimResults = false; // 只返回最终结果
+        recog.lang = 'zh-CN';
+        recog.interimResults = false;
         recog.maxAlternatives = 1;
         return recog;
     }
@@ -565,7 +290,6 @@
         if (!recognition) {
             recognition = initSpeechRecognition();
             if (!recognition) return;
-            // 绑定事件
             recognition.onstart = () => {
                 isRecognizing = true;
                 voiceStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> 聆听中... 请说话';
@@ -601,7 +325,7 @@
         }
         try {
             recognition.start();
-            voiceBtn.disabled = true;  // 防止重复点击
+            voiceBtn.disabled = true;
         } catch(e) {
             voiceStatus.innerHTML = '请先允许麦克风权限，或刷新后重试';
             voiceBtn.disabled = false;
@@ -610,9 +334,7 @@
 
     voiceBtn.addEventListener('click', startVoiceRecognition);
 
-    // ---------- OpenClaw API 调用 (灵活适配) ----------
-    // 默认请求适配器: 假设 OpenClaw 接收 { text: "用户输入" } 返回 { response: "答案" }
-    // 同时允许自定义通过修改下方函数 / 用户可配置不同格式，为了通用，支持简单模板
+    // ---------- OpenClaw API 调用 (真实对接) ----------
     async function callOpenClawApi(userText) {
         if (!userText) {
             showAnswer('❌ 没有可发送的文本，请先通过图片OCR、语音或手动输入内容。', true);
@@ -621,32 +343,29 @@
         let apiUrl = openclawUrlInput.value.trim();
         const apiKey = openclawApiKeyInput.value.trim();
         if (!apiUrl) {
-            showAnswer('⚠️ 未配置 OpenClaw API 端点，请在左侧「API配置」中填写有效地址，或点击「重置演示Mock」使用模拟演示。', true);
+            showAnswer('⚠️ 未配置 OpenClaw API 端点，请在左侧「API配置」中填写有效地址。', true);
             return;
         }
         
         showLoadingAnswer();
         
-        // 构造请求体 (符合主流 OpenAI / 通用格式，同时也适配很多对话模型)
-        // 若用户实际 OpenClaw 接口不同，可手动微调此处（提供说明）
-        const requestBody = {
-            text: userText,
-            message: userText,   // 兼容双字段
-            prompt: userText
-        };
-        // 默认简单模式: 只发送 text 字段，多数自定义模型可接收
+        // ========== 请根据你的真实 API 修改请求体 ==========
+        // 默认发送 { "text": "用户输入" }
         const finalPayload = { text: userText };
+        // 如果你的 API 需要其他字段，例如 { "prompt": "用户输入" }，请修改上面一行。
+        // 如果需要更多参数（如 temperature），也可以添加到 finalPayload 中。
         
         const headers = {
             'Content-Type': 'application/json',
         };
         if (apiKey) {
+            // 如果你的 API 使用其他认证方式（如 X-API-Key），请修改这里
             headers['Authorization'] = `Bearer ${apiKey}`;
         }
         
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30秒超时
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
             const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: headers,
@@ -659,7 +378,9 @@
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             const data = await response.json();
-            // 智能提取答案: 适配常见返回字段 response, reply, answer, content, text
+            
+            // ========== 请根据你的真实 API 返回格式修改答案提取逻辑 ==========
+            // 默认按顺序尝试常见字段：response, reply, answer, content, text, message
             let answerText = null;
             if (data.response) answerText = data.response;
             else if (data.reply) answerText = data.reply;
@@ -682,36 +403,6 @@
         }
     }
     
-    // 模拟演示模式 (当用户使用mock端点或者点击重置时，提供一个假响应，展示调用流程)
-    // 实际上我们的默认端点是一个mock占位，但为了更友好的模拟，拦截特定mock域名做本地模拟。
-    // 增强: 如果url包含 'mock-openclaw.demo' 就模拟回复
-    function isMockEndpoint(url) {
-        return url.includes('mock-openclaw.demo') || url === 'https://mock-openclaw.demo/api/chat';
-    }
-    
-    // 重写fetch拦截模拟演示（保留真实调用能力，只是对mock域名模拟）
-    const originalFetch = window.fetch;
-    window.fetch = function(...args) {
-        const url = args[0];
-        if (typeof url === 'string' && isMockEndpoint(url)) {
-            // 模拟 OpenClaw 返回
-            const options = args[1];
-            let bodyText = '';
-            if (options && options.body) {
-                try {
-                    const parsed = JSON.parse(options.body);
-                    bodyText = parsed.text || parsed.message || '用户消息';
-                } catch(e) { bodyText = '用户输入'; }
-            }
-            const mockReply = `🤖 [OpenClaw 模拟响应] 收到您的消息：「${bodyText}」\n\n✨ 这是演示模式返回的内容。请替换API端点为真实OpenClaw服务，即可获得模型智能答案。`;
-            return Promise.resolve(new Response(JSON.stringify({ response: mockReply }), {
-                status: 200,
-                headers: { 'Content-Type': 'application/json' }
-            }));
-        }
-        return originalFetch.apply(this, args);
-    };
-    
     // 发送按钮逻辑
     sendBtn.addEventListener('click', async () => {
         const text = getCurrentMessage();
@@ -722,25 +413,20 @@
         await callOpenClawApi(text);
     });
     
-    // 重置mock演示端点（方便测试流程）
+    // 重置配置按钮（清空 URL 和 Key）
     resetMockBtn.addEventListener('click', () => {
-        openclawUrlInput.value = 'https://mock-openclaw.demo/api/chat';
+        openclawUrlInput.value = '';
         openclawApiKeyInput.value = '';
-        showAnswer('✅ 已重置为模拟演示端点 (Mock)。您可看到OpenClaw的模拟回答，演示完整调用流程。', false);
-        setTimeout(() => {
-            if(answerDisplayDiv.innerHTML.includes('模拟演示端点')) return;
-        }, 2000);
+        showAnswer('✅ 已清空 API 配置，请填写真实的 OpenClaw 端点地址和密钥。', false);
     });
     
-    // 初始化时预先加载OCR worker (后台静默)
+    // 初始化
     window.addEventListener('load', () => {
         initTesseract().catch(e => console.warn);
-        // 预置示例提示
         userTextInput.placeholder = "OCR或语音识别结果自动填充至此，也可直接输入文字发送给OpenClaw...";
-        showAnswer('✨ 前端壳已启动。\n\n使用方式：\n1. 上传图片 → 自动OCR → 文字填入输入框\n2. 点击「开始语音识别」→ 说话 → 转文字\n3. 编辑或直接点击发送 → OpenClaw 模型处理 → 右侧展示答案', false);
+        showAnswer('✨ 前端壳已启动。\n\n使用方式：\n1. 上传图片 → 自动OCR → 文字填入输入框\n2. 点击「开始语音识别」→ 说话 → 转文字\n3. 编辑或直接点击发送 → OpenClaw 模型处理 → 右侧展示答案\n\n⚠️ 请先在左侧配置区填写真实的 OpenClaw API 地址和密钥。', false);
     });
     
-    // 调整文本域高度
     userTextInput.addEventListener('input', function() {
         this.style.height = 'auto';
         this.style.height = Math.min(120, this.scrollHeight) + 'px';
