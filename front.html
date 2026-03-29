@@ -1,4 +1,4 @@
-//大创项目前端
+//大创项目
 
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -11,47 +11,335 @@
     <!-- 优雅图标库 (Font Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* 样式部分完全不变，省略... 与用户提供的相同 */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; }
-        body { background: linear-gradient(145deg, #f5f7fc 0%, #eef2f8 100%); min-height: 100vh; padding: 2rem 1.5rem; }
-        .app-container { max-width: 1280px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 2.5rem; }
-        .header h1 { font-size: 2.4rem; font-weight: 700; background: linear-gradient(135deg, #1a2a3f, #0f2b3d); background-clip: text; -webkit-background-clip: text; color: transparent; letter-spacing: -0.3px; }
-        .header p { color: #4a627a; margin-top: 0.5rem; font-weight: 500; }
-        .badge { background: #e9edf2; display: inline-block; padding: 0.2rem 1rem; border-radius: 40px; font-size: 0.8rem; color: #2c4c6e; margin-top: 0.8rem; }
-        .dashboard { display: flex; flex-wrap: wrap; gap: 1.8rem; }
-        .input-panel { flex: 1.2; min-width: 280px; background: rgba(255,255,255,0.75); backdrop-filter: blur(2px); border-radius: 2rem; padding: 1.5rem; box-shadow: 0 12px 28px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.6); }
-        .output-panel { flex: 1; min-width: 280px; background: white; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 12px 28px rgba(0,0,0,0.08); display: flex; flex-direction: column; border: 1px solid #eef2f6; }
-        .module-card { background: white; border-radius: 1.5rem; padding: 1.2rem; margin-bottom: 1.8rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03); border: 1px solid #eef2f8; transition: all 0.2s; }
-        .module-title { font-weight: 600; font-size: 1.1rem; color: #1e2f3f; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; border-left: 4px solid #3b82f6; padding-left: 0.8rem; }
-        .module-title i { color: #3b82f6; font-size: 1.2rem; }
-        .upload-area { border: 2px dashed #cbd5e1; border-radius: 1.2rem; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafcff; }
-        .upload-area:hover { border-color: #3b82f6; background: #f0f7ff; }
-        .upload-area i { font-size: 2rem; color: #6c8db0; margin-bottom: 0.4rem; }
-        .image-preview { margin-top: 0.8rem; max-width: 100%; border-radius: 1rem; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .ocr-progress { font-size: 0.75rem; color: #3b82f6; margin-top: 0.5rem; font-weight: 500; }
-        .voice-btn { background: linear-gradient(120deg, #1e293b, #0f172a); color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 3rem; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.6rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .voice-btn:hover { background: linear-gradient(120deg, #0f172a, #020617); transform: scale(0.98); }
-        .voice-status { font-size: 0.75rem; color: #3b82f6; margin-top: 0.4rem; text-align: center; }
-        .text-input-area { margin: 0.5rem 0 1rem; }
-        .message-input { width: 100%; border: 1px solid #e2e8f0; border-radius: 1.5rem; padding: 1rem 1.2rem; font-size: 0.95rem; resize: vertical; background: #ffffff; transition: 0.2s; font-family: inherit; }
-        .message-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
-        .send-btn { background: #3b82f6; border: none; color: white; padding: 0.8rem 1rem; border-radius: 2rem; font-weight: 600; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.6rem; cursor: pointer; transition: 0.2s; font-size: 1rem; margin-top: 0.6rem; }
-        .send-btn:hover { background: #2563eb; transform: translateY(-1px); }
-        .send-btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
-        .answer-box { background: #f8fafc; border-radius: 1.2rem; padding: 1.2rem; margin-top: 1rem; flex-grow: 1; overflow-y: auto; min-height: 280px; border: 1px solid #eef2f8; }
-        .answer-header { font-weight: 600; margin-bottom: 0.8rem; color: #0f2b3d; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem; }
-        .answer-content { white-space: pre-wrap; line-height: 1.5; color: #1e2a3a; font-size: 0.95rem; }
-        .loading-spinner { display: inline-block; width: 1rem; height: 1rem; border: 2px solid #e2e8f0; border-top-color: #3b82f6; border-radius: 50%; animation: spin 0.6s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .config-area { margin-top: 1.5rem; background: #f1f5f9; border-radius: 1.2rem; padding: 0.9rem; font-size: 0.8rem; }
-        .config-title { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
-        .config-field { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem; }
-        .config-field input { flex: 1; padding: 0.4rem 0.6rem; border-radius: 1rem; border: 1px solid #cbd5e1; font-size: 0.75rem; background: white; }
-        .config-note { font-size: 0.7rem; color: #4b5563; margin-top: 0.3rem; }
-        button.small-btn { background: #e2e8f0; border: none; padding: 0.3rem 0.8rem; border-radius: 1rem; font-size: 0.7rem; cursor: pointer; }
-        hr { margin: 0.8rem 0; border-color: #e2e8f0; }
-        @media (max-width: 780px) { body { padding: 1rem; } .dashboard { flex-direction: column; } }
+       * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background: linear-gradient(145deg, #f5f7fc 0%, #eef2f8 100%);
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+}
+
+.app-container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.header h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1a2a3f, #0f2b3d);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    letter-spacing: -0.3px;
+}
+
+.header p {
+    color: #4a627a;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.badge {
+    background: #e9edf2;
+    display: inline-block;
+    padding: 0.2rem 1rem;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    color: #2c4c6e;
+    margin-top: 0.8rem;
+}
+
+.dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.8rem;
+}
+
+.input-panel {
+    flex: 1.2;
+    min-width: 280px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(2px);
+    border-radius: 2rem;
+    padding: 1.5rem;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.output-panel {
+    flex: 1;
+    min-width: 280px;
+    background: white;
+    border-radius: 2rem;
+    padding: 1.5rem;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eef2f6;
+}
+
+.module-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 1.2rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+    border: 1px solid #eef2f8;
+    transition: all 0.2s;
+}
+
+.module-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #1e2f3f;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-left: 4px solid #3b82f6;
+    padding-left: 0.8rem;
+}
+
+.module-title i {
+    color: #3b82f6;
+    font-size: 1.2rem;
+}
+
+.upload-area {
+    border: 2px dashed #cbd5e1;
+    border-radius: 1.2rem;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fafcff;
+}
+
+.upload-area:hover {
+    border-color: #3b82f6;
+    background: #f0f7ff;
+}
+
+.upload-area i {
+    font-size: 2rem;
+    color: #6c8db0;
+    margin-bottom: 0.4rem;
+}
+
+.image-preview {
+    margin-top: 0.8rem;
+    max-width: 100%;
+    border-radius: 1rem;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ocr-progress {
+    font-size: 0.75rem;
+    color: #3b82f6;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+.voice-btn {
+    background: linear-gradient(120deg, #1e293b, #0f172a);
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 3rem;
+    font-weight: 500;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.voice-btn:hover {
+    background: linear-gradient(120deg, #0f172a, #020617);
+    transform: scale(0.98);
+}
+
+.voice-status {
+    font-size: 0.75rem;
+    color: #3b82f6;
+    margin-top: 0.4rem;
+    text-align: center;
+}
+
+.text-input-area {
+    margin: 0.5rem 0 1rem;
+}
+
+.message-input {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 1.5rem;
+    padding: 1rem 1.2rem;
+    font-size: 0.95rem;
+    resize: vertical;
+    background: #ffffff;
+    transition: 0.2s;
+    font-family: inherit;
+}
+
+.message-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.send-btn {
+    background: #3b82f6;
+    border: none;
+    color: white;
+    padding: 0.8rem 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 1rem;
+    margin-top: 0.6rem;
+}
+
+.send-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.send-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.answer-box {
+    background: #f8fafc;
+    border-radius: 1.2rem;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    flex-grow: 1;
+    overflow-y: auto;
+    min-height: 280px;
+    border: 1px solid #eef2f8;
+}
+
+.answer-header {
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: #0f2b3d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+}
+
+.answer-content {
+    white-space: pre-wrap;
+    line-height: 1.5;
+    color: #1e2a3a;
+    font-size: 0.95rem;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid #e2e8f0;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.config-area {
+    margin-top: 1.5rem;
+    background: #f1f5f9;
+    border-radius: 1.2rem;
+    padding: 0.9rem;
+    font-size: 0.8rem;
+}
+
+.config-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.config-field {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.config-field input {
+    flex: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 1rem;
+    border: 1px solid #cbd5e1;
+    font-size: 0.75rem;
+    background: white;
+}
+
+.config-note {
+    font-size: 0.7rem;
+    color: #4b5563;
+    margin-top: 0.3rem;
+}
+
+button.small-btn {
+    background: #e2e8f0;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+hr {
+    margin: 0.8rem 0;
+    border-color: #e2e8f0;
+}
+
+@media (max-width: 780px) {
+    body {
+        padding: 1rem;
+    }
+
+    .dashboard {
+        flex-direction: column;
+    }
+}
     </style>
 </head>
 <body>
