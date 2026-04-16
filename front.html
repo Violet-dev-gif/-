@@ -1,11 +1,9 @@
-//大创项目
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>OpenClaw 智能前端 · 多模态交互壳</title>
+    <title>EducationClaw 智能解题 · Version1</title>
     <!-- Tesseract.js OCR 引擎 (纯前端) -->
     <script src="https://unpkg.com/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
     <!-- 优雅图标库 (Font Awesome) -->
@@ -347,7 +345,7 @@ hr {
     <div class="header">
         <h1>大创项目</h1>
         <p>可用语音识别等</p>
-        <div class="badge"><i class="fas fa-microchip"></i> 可调用 OpenClaw API</div>
+        <div class="badge"><i class="fas fa-microchip"></i> 已接入 EducationClaw 后端</div>
     </div>
 
     <div class="dashboard">
@@ -379,24 +377,24 @@ hr {
                 <div class="text-input-area">
                     <textarea id="userTextInput" rows="3" class="message-input" placeholder="OCR或语音识别结果会自动填入这里，您也可以直接输入文字..."></textarea>
                 </div>
-                <button id="sendToOpenClawBtn" class="send-btn"><i class="fas fa-paper-plane"></i> 发送给 OpenClaw → 获取答案</button>
+                <button id="sendToOpenClawBtn" class="send-btn"><i class="fas fa-paper-plane"></i> 发送给 EducationClaw → 获取答案</button>
             </div>
 
-            <!-- OpenClaw API 配置区 (灵活对接) -->
+            <!-- 后端 API 配置区 -->
             <div class="config-area">
-                <div class="config-title"><i class="fas fa-plug"></i> OpenClaw API 配置</div>
+                <div class="config-title"><i class="fas fa-plug"></i> EducationClaw 后端配置</div>
                 <div class="config-field">
-                    <span style="white-space: nowrap;">端点 URL:</span>
-                    <input type="text" id="openclawUrl" placeholder="https://your-openclaw-api.com/chat" value="">
+                    <span style="white-space: nowrap;">后端 URL:</span>
+                    <input type="text" id="openclawUrl" placeholder="http://127.0.0.1:8000" value="http://127.0.0.1:8000">
                 </div>
                 <div class="config-field">
-                    <span>API Key (选填):</span>
-                    <input type="text" id="openclawApiKey" placeholder="Bearer token 或 key">
+                    <span>优先模型(选填):</span>
+                    <input type="text" id="preferredModel" placeholder="如 mock-primary">
                 </div>
                 <div class="config-note">
-                    <i class="fas fa-info-circle"></i> 请填写真实的 OpenClaw API 地址和密钥。<br>
-                    默认请求格式：{ "text": "用户输入" }，响应会智能提取 response/reply/answer/content/text/message 字段。<br>
-                    如果你的 API 使用不同字段，请在下方代码中修改 callOpenClawApi 函数。
+                    <i class="fas fa-info-circle"></i> 默认请求接口：POST /solve。<br>
+                    请求格式：{ "text": "用户输入", "preferred_model": "可选" }。<br>
+                    返回包含答案、置信度、缓存命中状态与链路信息。
                 </div>
                 <div style="margin-top: 8px; display: flex; gap: 6px; justify-content: flex-end;">
                     <button id="resetMockBtn" class="small-btn"><i class="fas fa-undo-alt"></i> 清空配置</button>
@@ -404,10 +402,10 @@ hr {
             </div>
         </div>
 
-        <!-- 右侧：OpenClaw 答案展示区 -->
+        <!-- 右侧：答案展示区 -->
         <div class="output-panel">
             <div class="answer-header">
-                <i class="fas fa-brain" style="color:#3b82f6"></i> OpenClaw 模型回答
+                <i class="fas fa-brain" style="color:#3b82f6"></i> EducationClaw 回答
                 <span style="font-size:0.7rem; background:#eef2ff; padding:2px 8px; border-radius:20px; margin-left:8px;">实时响应</span>
             </div>
             <div id="answerDisplay" class="answer-box">
@@ -416,7 +414,7 @@ hr {
                 </div>
             </div>
             <div style="margin-top: 1rem; font-size: 0.7rem; text-align: center; color:#6c8db0;">
-                <i class="fas fa-arrow-right"></i> 流程：图片OCR/语音→文字 → OpenClaw → 答案展示
+                <i class="fas fa-arrow-right"></i> 流程：图片OCR/语音→文字 → FastAPI /solve → 答案展示
             </div>
         </div>
     </div>
@@ -440,7 +438,7 @@ hr {
     const sendBtn = document.getElementById('sendToOpenClawBtn');
     const answerDisplayDiv = document.getElementById('answerDisplay');
     const openclawUrlInput = document.getElementById('openclawUrl');
-    const openclawApiKeyInput = document.getElementById('openclawApiKey');
+    const preferredModelInput = document.getElementById('preferredModel');
     const resetMockBtn = document.getElementById('resetMockBtn');
 
     // ---------- 辅助函数 ----------
@@ -456,7 +454,7 @@ hr {
     function showLoadingAnswer() {
         answerDisplayDiv.innerHTML = `
             <div class="answer-content" style="display: flex; align-items: center; gap: 8px;">
-                <span class="loading-spinner"></span> OpenClaw 模型思考中...
+                <span class="loading-spinner"></span> EducationClaw 处理中...
             </div>
         `;
     }
@@ -622,35 +620,32 @@ hr {
 
     voiceBtn.addEventListener('click', startVoiceRecognition);
 
-    // ---------- OpenClaw API 调用 (真实对接) ----------
-    async function callOpenClawApi(userText) {
+    // ---------- EducationClaw 后端调用 ----------
+    async function callEducationClawApi(userText) {
         if (!userText) {
             showAnswer('❌ 没有可发送的文本，请先通过图片OCR、语音或手动输入内容。', true);
             return;
         }
-        let apiUrl = openclawUrlInput.value.trim();
-        const apiKey = openclawApiKeyInput.value.trim();
-        if (!apiUrl) {
-            showAnswer('⚠️ 未配置 OpenClaw API 端点，请在左侧「API配置」中填写有效地址。', true);
+        let apiBaseUrl = openclawUrlInput.value.trim();
+        const preferredModel = preferredModelInput.value.trim();
+        if (!apiBaseUrl) {
+            showAnswer('⚠️ 未配置后端地址，请在左侧填写有效 URL。', true);
             return;
         }
-        
+
+        apiBaseUrl = apiBaseUrl.replace(/\/+$/, '');
+        const apiUrl = `${apiBaseUrl}/solve`;
         showLoadingAnswer();
-        
-        // ========== 请根据你的真实 API 修改请求体 ==========
-        // 默认发送 { "text": "用户输入" }
-        const finalPayload = { text: userText };
-        // 如果你的 API 需要其他字段，例如 { "prompt": "用户输入" }，请修改上面一行。
-        // 如果需要更多参数（如 temperature），也可以添加到 finalPayload 中。
-        
+
+        const finalPayload = {
+            text: userText,
+            preferred_model: preferredModel || null
+        };
+
         const headers = {
             'Content-Type': 'application/json',
         };
-        if (apiKey) {
-            // 如果你的 API 使用其他认证方式（如 X-API-Key），请修改这里
-            headers['Authorization'] = `Bearer ${apiKey}`;
-        }
-        
+
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -666,26 +661,55 @@ hr {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             const data = await response.json();
-            
-            // ========== 请根据你的真实 API 返回格式修改答案提取逻辑 ==========
-            // 默认按顺序尝试常见字段：response, reply, answer, content, text, message
-            let answerText = null;
-            if (data.response) answerText = data.response;
-            else if (data.reply) answerText = data.reply;
-            else if (data.answer) answerText = data.answer;
-            else if (data.content) answerText = data.content;
-            else if (data.text) answerText = data.text;
-            else if (data.message) answerText = data.message;
-            else answerText = JSON.stringify(data);
-            
-            if (answerText) {
-                showAnswer(answerText);
+
+            if (data && data.answer) {
+                const validation = data.validation || {};
+                const validationMeta = [
+                    `验证通过: ${validation.passed ? '是' : '否'}`,
+                    `验证方法: ${validation.method || '-'}`,
+                    `等价分: ${typeof validation.equivalence_score === 'number' ? validation.equivalence_score.toFixed(3) : '-'}`,
+                    `标准答案: ${validation.normalized_answer || '-'}`,
+                    `期望表达: ${validation.normalized_expected || '-'}`,
+                    `实际表达: ${validation.normalized_actual || '-'}`,
+                    `验证说明: ${validation.reason || '-'}`
+                ].join('\n');
+
+                const agentDetails = Array.isArray(data.agent_outputs) && data.agent_outputs.length
+                    ? data.agent_outputs
+                        .map((agent, index) => {
+                            const summary = (agent.answer || '').replace(/\s+/g, ' ').slice(0, 120);
+                            return [
+                                `[${index + 1}] ${agent.agent_name || 'unknown'}`,
+                                `  模型: ${agent.model_name || '-'}`,
+                                `  置信度: ${typeof agent.confidence === 'number' ? agent.confidence.toFixed(3) : '-'}`,
+                                `  token: ${agent.token_cost || 0}`,
+                                `  摘要: ${summary || '-'}`
+                            ].join('\n');
+                        })
+                        .join('\n')
+                    : '无可用 Agent 明细';
+
+                const meta = [
+                    `trace_id: ${data.trace_id || '-'}`,
+                    `题型: ${data.question_type || 'unknown'}`,
+                    `置信度: ${typeof data.confidence === 'number' ? data.confidence.toFixed(3) : '-'}`,
+                    `缓存命中: ${data.cache_hit ? '是' : '否'}`,
+                    `模型: ${data.model_source || '-'}`,
+                    `耗时: ${data.latency_ms || 0} ms`,
+                    '',
+                    '[验证详情]',
+                    validationMeta,
+                    '',
+                    '[Agent输出]',
+                    agentDetails
+                ].join('\n');
+                showAnswer(`${data.answer}\n\n---\n${meta}`);
             } else {
-                showAnswer('⚠️ OpenClaw 返回数据格式未知，原始响应: ' + JSON.stringify(data).slice(0, 300), true);
+                showAnswer('⚠️ 后端返回数据格式未知，原始响应: ' + JSON.stringify(data).slice(0, 300), true);
             }
         } catch (error) {
-            console.error('OpenClaw 调用失败:', error);
-            let errorMsg = `❌ 调用 OpenClaw 失败: ${error.message}`;
+            console.error('EducationClaw 调用失败:', error);
+            let errorMsg = `❌ 调用后端失败: ${error.message}`;
             if (error.name === 'AbortError') errorMsg = '⏱️ 请求超时，请检查网络或API地址';
             showAnswer(errorMsg, true);
         }
@@ -698,21 +722,21 @@ hr {
             showAnswer('⚠️ 文本框为空，请通过图片/语音输入或手动填写文字后再发送。', true);
             return;
         }
-        await callOpenClawApi(text);
+        await callEducationClawApi(text);
     });
     
     // 重置配置按钮（清空 URL 和 Key）
     resetMockBtn.addEventListener('click', () => {
-        openclawUrlInput.value = '';
-        openclawApiKeyInput.value = '';
-        showAnswer('✅ 已清空 API 配置，请填写真实的 OpenClaw 端点地址和密钥。', false);
+        openclawUrlInput.value = 'http://127.0.0.1:8000';
+        preferredModelInput.value = '';
+        showAnswer('✅ 已重置后端配置。默认地址为 http://127.0.0.1:8000。', false);
     });
     
     // 初始化
     window.addEventListener('load', () => {
         initTesseract().catch(e => console.warn);
-        userTextInput.placeholder = "OCR或语音识别结果自动填充至此，也可直接输入文字发送给OpenClaw...";
-        showAnswer('✨ 前端壳已启动。\n\n使用方式：\n1. 上传图片 → 自动OCR → 文字填入输入框\n2. 点击「开始语音识别」→ 说话 → 转文字\n3. 编辑或直接点击发送 → OpenClaw 模型处理 → 右侧展示答案\n\n⚠️ 请先在左侧配置区填写真实的 OpenClaw API 地址和密钥。', false);
+        userTextInput.placeholder = "OCR或语音识别结果自动填充至此，也可直接输入文字发送给 EducationClaw...";
+        showAnswer('✨ 前端壳已启动。\n\n使用方式：\n1. 上传图片 → 自动OCR → 文字填入输入框\n2. 点击「开始语音识别」→ 说话 → 转文字\n3. 编辑或直接点击发送 → FastAPI /solve → 右侧展示答案\n\n提示：先启动本地后端，再点击发送。', false);
     });
     
     userTextInput.addEventListener('input', function() {
